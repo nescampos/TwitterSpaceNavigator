@@ -1,0 +1,73 @@
+﻿@model IndexNavigatorViewModel
+
+@{
+    ViewData["Title"] = "Space Navigator";
+}
+
+
+<div class="row">
+    <div class="col-12">
+        @using(Html.BeginForm(FormMethod.Get))
+        {
+            <span class="h3">Filter spaces</span>
+            <div class="row">
+                <div class="col-3">
+                    @Html.LabelFor(x => x.Form.Title)
+                    @Html.TextBoxFor(x => x.Form.Title, new {@class="form-control"})  <br />
+                    @Html.ValidationMessageFor(x => x.Form.Title)
+                </div>
+                <div class="col-3">
+                    @Html.LabelFor(x => x.Form.Language)
+                    @Html.DropDownListFor(x => x.Form.Language, Model.Languages,"Select a language", new {@class="form-control"}) <br />
+                    @Html.ValidationMessageFor(x => x.Form.Language)
+                </div>
+                <div class="col-3">
+                    @Html.LabelFor(x => x.Form.IsLive)
+                    @Html.DropDownListFor(x => x.Form.IsLive, Model.IsLive,"Select an option", new {@class="form-control"}) <br />
+                    @Html.ValidationMessageFor(x => x.Form.IsLive)
+                </div>
+                <div class="col-3">
+                    <br />
+                    <input type="submit" value="Search" class="btn btn-primary" />
+                </div>
+            </div>
+            
+        }
+    </div>
+</div>
+<div class="row">
+        @if(Model.Response != null)
+        {
+            if(Model.Response.data != null && Model.Response.data.Any())
+            {
+                foreach(var space in Model.Response.data)
+                {
+                    <div class="col-lg-4 text-center">
+                    <a href="https://twitter.com/i/spaces/@(space.id)" target="_blank" class="pricing-card">
+                        <div class="head">@space.title</div>
+                        <div class="body">
+                            <h1><small>@(space.state == "scheduled"? "Start at "+space.scheduled_start.Value.ToLocalTime() : "Is Live")</small></h1>
+                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item">Language: <strong>@Model.ReturnLanguage(space.lang)</strong></li>
+                            <li class="list-group-item">Participants: <strong>@space.participant_count</strong></li>
+                        </ul>
+                    </a>
+                </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                     There are no Spaces with the filters available
+                  </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-primary alert-dismissible fade show" role="alert">
+             Please, select the filters to be able to search for available Spaces.
+          </div>
+        }
+    </div>
+    
